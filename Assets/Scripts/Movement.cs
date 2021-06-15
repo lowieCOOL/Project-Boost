@@ -5,6 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     Rigidbody rb;
+    AudioSource thrustSound;
     KeyCode moveLeftKey = KeyCode.Q;
     KeyCode moveRightKey = KeyCode.D;
     [SerializeField] float thrustMagnitude = 10f;
@@ -14,6 +15,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        thrustSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -28,7 +30,16 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
+            if (!thrustSound.isPlaying)
+            {
+                thrustSound.Play();
+            } 
+
             rb.AddRelativeForce(Vector3.up * thrustMagnitude * Time.deltaTime);
+        }
+        else
+        {
+            thrustSound.Stop();
         }
     }
 
