@@ -12,11 +12,48 @@ public class CollisionHandler : MonoBehaviour
 
     AudioSource audioSource;
 
-    bool isTransitioning = false;
+    bool isTransitioning, collisionDebug = false;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+    }
+
+    void Update()
+    {
+        ProcessDebug();   
+    }
+
+    void ProcessDebug()
+    {
+        LoadNextLevelDebug();
+        ToggleCollisionDebug();
+    }
+
+    void LoadNextLevelDebug()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+            Debug.Log("Debug: Loaded next level");
+        }
+    }
+
+    void ToggleCollisionDebug()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.W) && Input.GetKeyDown(KeyCode.C))
+        {
+            if (!collisionDebug)
+            {
+                collisionDebug = true;
+                Debug.Log("Debug: Disabled collisions");
+            }
+            else
+            {
+                collisionDebug = false;
+                Debug.Log("Debug: Enabled collisions");
+            }
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -35,6 +72,7 @@ public class CollisionHandler : MonoBehaviour
 
                 break;
             default:
+                if (collisionDebug) {return;}
                 StartCrashSequence();
                 break;
         }
