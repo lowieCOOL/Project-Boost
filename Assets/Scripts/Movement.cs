@@ -12,6 +12,8 @@ public class Movement : MonoBehaviour
     [SerializeField] float rotationThrustMagnitude = 10f;
     [SerializeField] AudioClip engineThrust;
 
+    [SerializeField] ParticleSystem mainThrusterParticles, leftThrusterParticles, rightThrusterParticles;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,16 +33,12 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            if (!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(engineThrust);
-            } 
-
-            rb.AddRelativeForce(Vector3.up * thrustMagnitude * Time.deltaTime);
+            StartThrusting();
         }
         else
         {
-            audioSource.Stop();
+            StopThrusting();
+
         }
     }
 
@@ -48,13 +46,58 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(moveLeftKey))
         {
-            ApplyRotation(rotationThrustMagnitude);
+            RotateLeft();
         }
         else if (Input.GetKey(moveRightKey))
         {
-            ApplyRotation(-rotationThrustMagnitude);
+            RotateRight();
+        }
+        else
+        {
+            StopRotating();
         }
 
+    }
+
+    void StartThrusting()
+    {
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(engineThrust);
+        }
+
+        if (!mainThrusterParticles.isPlaying)
+        {
+            mainThrusterParticles.Play();
+        }
+
+        rb.AddRelativeForce(Vector3.up * thrustMagnitude * Time.deltaTime);
+    }
+
+    void StopThrusting()
+    {
+        audioSource.Stop();
+        mainThrusterParticles.Stop();
+    }
+
+    void RotateLeft()
+    {
+        if (!rightThrusterParticles.isPlaying)
+        {
+            rightThrusterParticles.Play();
+        }
+
+        ApplyRotation(rotationThrustMagnitude);
+    }
+
+    void RotateRight()
+    {
+        if (!leftThrusterParticles.isPlaying)
+        {
+            leftThrusterParticles.Play();
+        }
+
+        ApplyRotation(-rotationThrustMagnitude);
     }
 
     void ApplyRotation(float rotationThisFrame)
@@ -62,5 +105,11 @@ public class Movement : MonoBehaviour
         rb.freezeRotation = true; //freeze rotation so that when we rotate we aren't rotated by obstacles
         transform.Rotate(Vector3.forward * rotationThisFrame * Time.deltaTime);
         rb.freezeRotation = false;
+    }
+
+    void StopRotating()
+    {
+        leftThrusterParticles.Stop();
+        rightThrusterParticles.Stop();
     }
 }
