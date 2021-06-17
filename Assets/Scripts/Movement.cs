@@ -5,17 +5,18 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     Rigidbody rb;
-    AudioSource thrustSound;
+    AudioSource audioSource;
     KeyCode moveLeftKey = KeyCode.Q;
     KeyCode moveRightKey = KeyCode.D;
     [SerializeField] float thrustMagnitude = 10f;
     [SerializeField] float rotationThrustMagnitude = 10f;
+    [SerializeField] AudioClip engineThrust;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        thrustSound = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -30,16 +31,16 @@ public class Movement : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            if (!thrustSound.isPlaying)
+            if (!audioSource.isPlaying)
             {
-                thrustSound.Play();
+                audioSource.PlayOneShot(engineThrust);
             } 
 
             rb.AddRelativeForce(Vector3.up * thrustMagnitude * Time.deltaTime);
         }
         else
         {
-            thrustSound.Stop();
+            audioSource.Stop();
         }
     }
 
